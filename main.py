@@ -1,6 +1,7 @@
 from machine import ADC, Pin
 import time
 from Influx import Influx
+import network
 
 AIR_HUM = 57000
 WATER_HUM = 150
@@ -21,6 +22,9 @@ influx = Influx()
 
 # Main loop
 while True:
+    if not network.WLAN(network.STA_IF).isconnected():
+        print("WiFi connection lost. Reconnecting...")
+        influx.connect_to_wifi()
     raw_hum = humidity_sensor.read_u16()
     humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
     print('raw_humidity: ' + str(raw_hum))
