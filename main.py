@@ -1,5 +1,6 @@
 from machine import ADC, Pin
 import time
+from .Influx import Influx
 
 AIR_HUM = 57000
 WATER_HUM = 150
@@ -16,9 +17,12 @@ humidity_sensor = ADC(Pin(hum_pin, Pin.IN))
 for lamp in lamps:
     lamp.value(1)
 
+influx = Influx()
+
 # Main loop
 while True:
     raw_hum = humidity_sensor.read_u16()
     humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
+
     time.sleep(5)
     
