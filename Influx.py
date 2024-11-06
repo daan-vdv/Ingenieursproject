@@ -12,8 +12,29 @@ class Influx:
         self.INFLUXDB_URL = "http://194.164.125.152:8086/write?db=ip"
         self.INFLUXDB_USER = "ip"
         self.INFLUXDB_PASSWORD = "maindbIP"
+        self.SSID = "IoTdevices"       # Replace with your WiFi SSID
+        self.PASSWORD = "zQDOj59FDAbgk8SOUhSo"  # Replace with your WiFi password
         super()
 
+    # Connect to WiFi
+    def connect_to_wifi(self):
+        wlan = network.WLAN(network.STA_IF)  # Set the network interface to station mode
+        wlan.active(True)                    # Activate the network interface
+        wlan.connect(self.SSID, self.PASSWORD)         # Connect to WiFi network
+        
+        # Wait for connection
+        max_attempts = 10
+        attempt_count = 0
+        while not wlan.isconnected() and attempt_count < max_attempts:
+            print("Connecting to WiFi...")
+            time.sleep(1)
+            attempt_count += 1
+        
+        if wlan.isconnected():
+            print("Connected to WiFi!")
+            print("Network config:", wlan.ifconfig())
+        else:
+            print("Failed to connect to WiFi.")
 
     # Send data to InfluxDB
     def send_data(self, raw_hum):
