@@ -1,12 +1,25 @@
 from machine import ADC, Pin
 import time
 
-hum_pin = 26
-adc = ADC(Pin(hum_pin))
+AIR_HUM = 57000
+WATER_HUM = 150
 
+hum_pin = 26
+lamp_pins = [16, 17, 18]
+pump_pin = 10
+
+lamps = [Pin(lamp_pin, Pin.OUT) for lamp_pin in lamp_pins]
+pump = Pin(pump_pin, Pin.OUT)
+humidity_sensor = ADC(Pin(hum_pin, Pin.IN))
+
+# Lamps always on
+for lamp in lamps:
+    lamp.value(1)
+
+# Main loop
 while True:
-    print(adc.read_u16())
+    raw_hum = humidity_sensor.read_u16()
+    humidity = 0 #map raw data to %
     time.sleep(1)
     #43000 droog
-    
     
