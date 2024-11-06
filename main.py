@@ -23,8 +23,20 @@ influx = Influx()
 while True:
     raw_hum = humidity_sensor.read_u16()
     humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
+    print('raw_humidity: ' + str(raw_hum))
+    print('humidity: ' + str(humidity))
 
-    influx.send_data(raw_hum)
+    influx.send_data(raw_hum=humidity)
+
+    if humidity <= 60:
+        while humidity <= 80:
+            pump.value(1)
+
+            raw_hum = humidity_sensor.read_u16()
+            humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
+
+        pump.value(0)
+
 
     time.sleep(5)
     
