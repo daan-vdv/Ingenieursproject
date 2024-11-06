@@ -6,27 +6,28 @@ import gc
 import machine
 
 class Influx:
+
+
     def __init__(self):
+        self.INFLUXDB_URL = "http://194.164.125.152:8086/write?db=ip"
+        self.INFLUXDB_USER = "ip"
+        self.INFLUXDB_PASSWORD = "maindbIP"
         super()
 
-    INFLUXDB_URL = "http://194.164.125.152:8086/write?db=ip"
-    INFLUXDB_USER = "ip"
-    INFLUXDB_PASSWORD = "maindbIP"
-    field = "value"
 
     # Send data to InfluxDB
-    def send_data(self, raw_hum, field):
+    def send_data(self, raw_hum):
         # Construct the line protocol data
-        data = f"raw_humidity {field}={raw_hum}"
+        data = f"raw_humidity value={raw_hum}"
         
         # Send the data with basic auth
         headers = {
-            "Authorization": "Basic " + ubinascii.b2a_base64(f"{INFLUXDB_USER}:{INFLUXDB_PASSWORD}").decode().strip(),
+            "Authorization": "Basic " + ubinascii.b2a_base64(f"{self.INFLUXDB_USER}:{self.INFLUXDB_PASSWORD}").decode().strip(),
             "Content-Type": "application/x-www-form-urlencoded"
         }
         
         try:
-            response = urequests.post(INFLUXDB_URL, headers=headers, data=data)
+            response = urequests.post(self.INFLUXDB_URL, headers=headers, data=data)
             if response.status_code == 204:
                 print("Data written to InfluxDB successfully.")
             else:
@@ -34,6 +35,5 @@ class Influx:
             response.close()
         except Exception as e:
             print("Error writing to InfluxDB:", e)
-    # Main function to read and send data
 
         

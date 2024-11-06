@@ -1,6 +1,6 @@
 from machine import ADC, Pin
 import time
-from .Influx import Influx
+from Influx import Influx
 
 AIR_HUM = 57000
 WATER_HUM = 150
@@ -23,6 +23,8 @@ influx = Influx()
 while True:
     raw_hum = humidity_sensor.read_u16()
     humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
+
+    influx.send_data(raw_hum)
 
     time.sleep(5)
     
