@@ -19,7 +19,6 @@ for lamp in lamps:
 # Main loop
 while True:
     raw_hum = humidity_sensor.read_u16()
-    humidity = 0 #map raw data to %
-    time.sleep(1)
-    #43000 droog
+    humidity = ((AIR_HUM - raw_hum) / AIR_HUM) * 100 # convert raw_hum to percentage
+    time.sleep(5)
     
