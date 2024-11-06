@@ -38,6 +38,8 @@ class Influx:
 
     # Send data to InfluxDB
     def send_data(self, raw_hum):
+        led = machine.Pin("LED", machine.Pin.OUT)
+        led.on()
         # Construct the line protocol data
         data = f"raw_humidity value={raw_hum}"
         
@@ -56,5 +58,7 @@ class Influx:
             response.close()
         except Exception as e:
             print("Error writing to InfluxDB:", e)
+
+        led.off()
 
         
