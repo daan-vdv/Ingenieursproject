@@ -7,13 +7,14 @@ import machine
 
 class Influx:
 
-
     def __init__(self):
         self.INFLUXDB_URL = "http://194.164.125.152:8086/write?db=ip"
         self.INFLUXDB_USER = "ip"
         self.INFLUXDB_PASSWORD = "maindbIP"
         self.SSID = "IoTdevices"       # Replace with your WiFi SSID
         self.PASSWORD = "zQDOj59FDAbgk8SOUhSo"  # Replace with your WiFi password
+        self.connect_to_wifi() # Connect to wifi when initialized
+        self.led = machine.Pin("LED", machine.Pin.OUT)
         super()
 
     # Connect to WiFi
@@ -37,11 +38,10 @@ class Influx:
             print("Failed to connect to WiFi.")
 
     # Send data to InfluxDB
-    def send_data(self, raw_hum):
-        led = machine.Pin("LED", machine.Pin.OUT)
-        led.on()
+    def send_data(self, hum, lux, pump, lights):
+        self.led.on()
         # Construct the line protocol data
-        data = f"raw_humidity value={raw_hum}"
+        data = f"raw_humidity value={hum}\nlux value={lux}\npump value={pump}\nlights value={lights}"
         
         # Send the data with basic auth
         headers = {
@@ -59,6 +59,4 @@ class Influx:
         except Exception as e:
             print("Error writing to InfluxDB:", e)
 
-        led.off()
-
-        
+        self.led.off()
