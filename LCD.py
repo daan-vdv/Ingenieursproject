@@ -1,4 +1,4 @@
-from machine import I2C, Pin
+from machine import SoftI2C, Pin
 from DIYables_MicroPython_LCD_I2C import LCD_I2C
 import time
 import math
@@ -15,7 +15,7 @@ class LCDScherm:
         self.LCD_COLS = 16
 
         # Initialize I2C
-        self.i2c = I2C(0, sda=Pin(0), scl=Pin(1), freq=400000)
+        self.i2c = SoftI2C(sda=Pin(5), scl=Pin(4), freq=400000)
 
         # Initialize LCD
         self.lcd = LCD_I2C(self.i2c, self.I2C_ADDR, self.LCD_ROWS, self.LCD_COLS)
