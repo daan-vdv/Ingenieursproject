@@ -21,7 +21,7 @@ lamps = [Pin(lamp_pin, Pin.OUT) for lamp_pin in lamp_pins]
 pump = Pin(pump_pin, Pin.OUT)
 humidity_sensor = ADC(Pin(hum_pin, Pin.IN))
 
-rtc = RTC()
+rtc = RTC() # Initialize Real Time Clock
 
 # Lamps always on for now
 for lamp in lamps:
