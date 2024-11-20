@@ -93,12 +93,14 @@ def set_time():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
         s.settimeout(1)
-        print(s)
         res = s.sendto(NTP_QUERY, addr)
         msg = s.recv(48)
-
+        print(msg)
+    
     except:
-        print('[ERROR]')
+        print('Could not fetch time. Retrying in 2 seconds...')
+        time.sleep(2)
+        set_time()
 
     finally:
         s.close()
@@ -155,7 +157,12 @@ lcd_data_index = 0
 # Main loop
 while True:
     pump_value = 0
-    set_time()
+
+    if not network.WLAN(network.STA_IF).isconnected():
+        print("WiFi connection lost. Reconnecting...")
+        influx.connect_to_wifi()
+        
+    # set_time()
 
     manage_lamps()
 
@@ -165,9 +172,6 @@ while True:
     else:
         lcd_data_index += 1
 
-    if not network.WLAN(network.STA_IF).isconnected():
-        print("WiFi connection lost. Reconnecting...")
-        influx.connect_to_wifi()
 
     # Read humidity and convert to %
     raw_hum = humidity_sensor.read_u16()
