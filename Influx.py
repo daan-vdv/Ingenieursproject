@@ -38,10 +38,10 @@ class Influx:
             print("Failed to connect to WiFi.")
 
     # Send data to InfluxDB
-    def send_data(self, hum, lux, pump, lights):
+    def send_data(self, hum, lux, pump, lights, temperature):
         self.led.on()
         # Construct the line protocol data
-        data = f"raw_humidity value={hum}\nlux value={lux}\npump value={pump}\nlights value={lights}"
+        data = f"raw_humidity value={hum}\nlux value={lux}\npump value={pump}\nlights value={lights}\ntempature value={temperature}"
         
         # Send the data with basic auth
         headers = {

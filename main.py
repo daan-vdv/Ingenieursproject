@@ -117,19 +117,12 @@ def check_lux(lux):
 
 def check_temp():
     ds_sensor = ds18x20.DS18X20(onewire.OneWire(temperatuur))
-
     roms = ds_sensor.scan()
-    print('Found DS devices: ', roms)
-
-    while True:
-      ds_sensor.convert_temp()
-      time.sleep_ms(750)
-      for rom in roms:
-        print(rom)
+    ds_sensor.convert_temp()
+    for rom in roms:
         tempC = ds_sensor.read_temp(rom)
-        print('temperature (ºC):', "{:.2f}".format(tempC))
-        print()
-      time.sleep(5)
+        print(tempC)
+    return tempC
 
 def manage_lamps():
     global lamp_value
@@ -155,9 +148,10 @@ lcd_data_index = 0
 # Main loop
 while True:
     pump_value = 0
-    set_time()
+    # set_time()
 
     manage_lamps()
+    tempC=check_temp()
 
     if lcd_data_index == 2:
         lcd_data_index = 0
@@ -185,5 +179,5 @@ while True:
     data_to_show = list(all_data[lcd_data_index].keys())[0] 
     lcd.show_data(data_to_show, all_data[lcd_data_index][data_to_show])
 
-    influx.send_data(hum=humidity, lux=lux, pump=pump_value, lights=lamp_value)
+    influx.send_data(hum=humidity, lux=lux, pump=pump_value, lights=lamp_value, temperature=tempC)
     time.sleep(5)
