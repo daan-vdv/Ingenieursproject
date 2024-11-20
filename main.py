@@ -1,8 +1,9 @@
 from machine import ADC, Pin, SoftI2C, RTC
 import network
+import socket
+import struct
 
 import time
-from datetime import date
 
 from Influx import Influx
 from BH1750 import BH1750
@@ -28,10 +29,10 @@ for lamp in lamps:
     lamp.value(1)
 
 # Initialize I2C communication for light sensor
-i2c_light = SoftI2C(scl=Pin(5), sda=Pin(4), freq=400000)
+i2c = SoftI2C(sda=Pin(0), scl=Pin(1), freq=400000)
 
 # Create BH1750 object
-light_sensor = BH1750(bus=i2c_light, addr=0x23)
+light_sensor = BH1750(bus=i2c, addr=0x23)
 light_sensor.reset()
 
 #Initialize Influx connection
@@ -81,6 +82,32 @@ def check_humidity(humidity, raw_hum):
         else:
             print('[INFO] Humidity is not too low.')
 
+def set_time():
+    # Get the external time reference
+    NTP_QUERY = bytearray(48)
+    NTP_QUERY[0] = 0x1B
+    addr = socket.getaddrinfo("pool.ntp.org", 123)[0][-1]
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.settimeout(1)
+        print(s)
+        res = s.sendto(NTP_QUERY, addr)
+        msg = s.recv(48)
+
+    except:
+        print('[ERROR]')
+
+    finally:
+        s.close()
+
+    #Set our internal time
+    val = struct.unpack("!I", msg[40:44])[0]
+    tm = val - 2208988800
+    t = time.gmtime(tm)
+    rtc.datetime((t[0],t[1],t[2],t[6]+1,t[3],t[4],t[5],0))
+    print(t)
+    print('Time synchronized')
+
 def check_lux(lux):
     if lux < 10:
         lamps[0].on()
@@ -109,8 +136,9 @@ lcd_data_index = 0
 # Main loop
 while True:
     pump_value = 0
+    set_time()
 
-    # manage_lamps()
+    manage_lamps()
 
     if lcd_data_index == 2:
         lcd_data_index = 0
