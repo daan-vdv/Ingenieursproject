@@ -1,5 +1,6 @@
 from machine import ADC, Pin, SoftI2C, RTC
 import network
+import onewire, ds18x20
 
 import time
 from datetime import date
@@ -15,11 +16,13 @@ WATER_HUM = 150
 hum_pin = 26
 lamp_pins = [16, 17, 18]
 pump_pin = 10
+temp_pin = 22
 
 # Initialize pins as INPUT or OUTPUT
 lamps = [Pin(lamp_pin, Pin.OUT) for lamp_pin in lamp_pins]
 pump = Pin(pump_pin, Pin.OUT)
 humidity_sensor = ADC(Pin(hum_pin, Pin.IN))
+temperatuur = Pin(temp_pin, Pin.IN)
 
 rtc = RTC() # Initialize Real Time Clock
 
@@ -84,6 +87,22 @@ def check_humidity(humidity, raw_hum):
 def check_lux(lux):
     if lux < 10:
         lamps[0].on()
+
+def check_temp():
+    ds_sensor = ds18x20.DS18X20(onewire.OneWire(temperatuur))
+
+    roms = ds_sensor.scan()
+    print('Found DS devices: ', roms)
+
+    while True:
+      ds_sensor.convert_temp()
+      time.sleep_ms(750)
+      for rom in roms:
+        print(rom)
+        tempC = ds_sensor.read_temp(rom)
+        print('temperature (ºC):', "{:.2f}".format(tempC))
+        print()
+      time.sleep(5)
 
 def manage_lamps():
     global lamp_value
