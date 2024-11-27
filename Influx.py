@@ -69,10 +69,10 @@ class Influx:
 
 
     # Send data to InfluxDB
-    def send_data(self, hum, lux, pump, lights, temperature):
+    def send_data(self, hum, lux, pump, lights, temperature, flow, v_water):
         self.led.on()
         # Construct the line protocol data
-        data = f"raw_humidity value={hum}\nlux value={lux}\npump value={pump}\nlights value={lights}\ntempature value={temperature}"
+        data = f"raw_humidity value={hum}\nlux value={lux}\npump value={pump}\nlights value={lights}\ntempature value={temperature}\nflow value={flow}\nv_water value={v_water}"
         
         # Send the data with basic auth
         headers = {

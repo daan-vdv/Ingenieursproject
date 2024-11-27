@@ -1,9 +1,9 @@
 import machine
 
-sdaPIN=machine.Pin(0)  
-sclPIN=machine.Pin(1)
+sdaPIN=machine.Pin(8)  
+sclPIN=machine.Pin(9)
 
-i2c=machine.SoftI2C(sda=sdaPIN, scl=sclPIN, freq=400000)   
+i2c=machine.SoftI2C(sda=sdaPIN, scl=sclPIN, freq=100000)   
 
 devices = i2c.scan()
 print('14CORE - i2c Finder / Scanner ')
